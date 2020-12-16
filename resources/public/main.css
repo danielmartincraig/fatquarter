@@ -1,0 +1,12 @@
+.interface-square {
+    stroke: none;
+    stroke-width: 1;
+    fill: none;
+    pointer-events: visible;
+}
+
+.graph-square {
+    stroke: gray;
+    stroke-width: 2;
+    fill: none;
+}

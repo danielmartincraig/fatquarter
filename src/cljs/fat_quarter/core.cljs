@@ -5,6 +5,7 @@
    [fat-quarter.events :as events]
    [fat-quarter.views :as views]
    [fat-quarter.config :as config]
+   [fat-quarter.tools :as tools]
    ))
 
 
@@ -20,5 +21,6 @@
 
 (defn init []
   (re-frame/dispatch-sync [::events/initialize-db])
+  (re-frame/dispatch-sync [::tools/load-tools])
   (dev-setup)
   (mount-root))
