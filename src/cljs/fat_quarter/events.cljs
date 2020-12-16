@@ -36,6 +36,7 @@
 
 (re-frame/reg-event-db
  ::set-pen-down
- (re-frame/path [:pen-down?]
-                true))
+ (re-frame/path [:pen-down?])
+ (fn-traced [pen-down & _]
+            true))
 

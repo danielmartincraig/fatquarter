@@ -6,13 +6,13 @@
    ))
 
 (defn interface-square [column row]
-  (let [{:keys [on-click]} @(re-frame/subscribe [::subs/active-tool-attrs])
-        on-click-fn #(apply on-click [column row])
+  (let [{:keys [on-mouse-down]} @(re-frame/subscribe [::subs/active-tool-attrs])
+        on-mouse-down-fn #(apply on-mouse-down [column row])
         attrs {:width 20
                :height 20
                :x column
                :y row}]
-    [:rect.interface-square (assoc attrs :on-click on-click-fn)]))
+    [:rect.interface-square (assoc attrs :on-mouse-down on-mouse-down-fn)]))
 
 (defn interface []
   (let [quilt-dimensions @(re-frame/subscribe [::subs/quilt-dimensions])
