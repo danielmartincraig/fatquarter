@@ -23,6 +23,12 @@
    (:active-tool db)))
 
 (re-frame/reg-sub
+ ::quilt-paths
+ :<- [::quilt]
+ (fn [quilt & _]
+   (:paths quilt)))
+
+(re-frame/reg-sub
  ::quilt-dimensions
  :<- [::quilt]
  (fn [quilt _]

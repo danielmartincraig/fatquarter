@@ -13,25 +13,32 @@
   (let [click (fn [row column] (js/alert (str "You clicked " row "," column)))]
     {:on-click click}))
 
-(defn line-drawer []
-  (let [pen-down? @(re-frame/subscribe [::subs/pen-down?])
-        paths     @(re-frame/subscribe [::subs/paths])
-        xy         (fn xy [e]
-                     (let [rect (.getBoundingClientRect (.-target e))]
-                       [(- (.-clientX e) (.-left rect))
-                        (- (.-clientY e) (.-top rect))]))
-        start-path (fn start-path [e] (when (not= (.-buttons e) 0)
-                                        (re-frame/dispatch [::events/set-pen-down])
-                                        (let [[x y] (xy e)]
-                                          (re-frame/dispatch [::events/start-path [x y]]))))
-        continue-path (fn continue-path [e] (when pen-down?
-                                              (let [[x y] (xy e)]
-                                                (re-frame/dispatch [::events/continue-path [x y]]))))
-        end-path (fn end-path [e]
-                   (when pen-down?
-                     (continue-path e)
-                     (re-frame/dispatch [::events/set-pen-up])))
-        ]))
+(def line-drawer
+  (let [pen-down? true ;;@(re-frame/subscribe [::subs/pen-down])
+        paths     @(re-frame/subscribe [::subs/quilt-paths])
+;;        xy         (fn xy [e]
+;;                     (let [rect (.getBoundingClientRect (.-target e))]
+;;                       [(- (.-clientX e) (.-left rect))
+;;                        (- (.-clientY e) (.-top rect))]))
+;;        start-path (fn start-path [e] (when (not= (.-buttons e) 0)
+;;                                        (re-frame/dispatch [::events/set-pen-down])
+;;                                        (let [[x y] (xy e)]
+;;                                          (re-frame/dispatch [::events/start-path [x y]]))))
+;;        continue-path (fn continue-path [e] (when pen-down?
+;;                                              (let [[x y] (xy e)]
+;;                                                (re-frame/dispatch [::events/continue-path [x y]]))))
+;;        end-path (fn end-path [e]
+;;                   (when pen-down?
+;;                     (continue-path e)
+;;                     (re-frame/dispatch [::events/set-pen-up])))
+        ]
+    {
+;;     :on-mouse-down start-path
+;;     :on-mouse-over start-path
+;;     :on-mouse-move continue-path
+;;     :on-mouse-up end-path
+;;     :on-mouse-out end-path
+     }))
 
 (re-frame/reg-event-db
  ::load-tools
@@ -39,7 +46,7 @@
  (fn-traced []
             {:pointer pointer
              :clicker clicker
-             ;;             :line-drawer line-drawer
+             :line-drawer line-drawer
              }))
 
 
