@@ -5,5 +5,6 @@
 (def default-db
   {:quilt {:dimensions 10
            :paths []}
-   :active-tool :clicker
-   :toolbox {:available-tools {}}})
+   :active-tool :line-drawer
+   :toolbox {:available-tools {}}
+   :pen-down :up})

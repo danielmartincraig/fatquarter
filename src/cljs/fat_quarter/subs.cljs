@@ -18,6 +18,11 @@
    (:toolbox db)))
 
 (re-frame/reg-sub
+ ::pen-down
+ (fn [db]
+   (:pen-down db)))
+
+(re-frame/reg-sub
  ::active-tool
  (fn [db _]
    (:active-tool db)))
@@ -35,12 +40,6 @@
    (:dimensions quilt)))
 
 (re-frame/reg-sub
- ::quilt-paths
- :<- [::quilt]
- (fn [quilt _]
-   (:paths quilt)))
-
-(re-frame/reg-sub
  ::available-tools
  :<- [::toolbox]
  (fn [toolbox _]
@@ -52,4 +51,5 @@
  :<- [::active-tool]
  (fn [[available-tools active-tool] _]
    (get available-tools active-tool)))
+
 

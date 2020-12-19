@@ -31,12 +31,31 @@
 (re-frame/reg-event-db
  ::set-active-tool
  (re-frame/path [:active-tool])
- (fn-traced [active-tool [event new-active-tool & _]]
+ (fn-traced [active-tool [event new-active-tool & _]
+             ]
             new-active-tool))
 
 (re-frame/reg-event-db
  ::set-pen-down
- (re-frame/path [:pen-down?])
+ (re-frame/path [:pen-down])
  (fn-traced [pen-down & _]
-            true))
+            :down))
 
+(re-frame/reg-event-db
+ ::set-pen-up
+ (re-frame/path [:pen-down])
+ (fn-traced [pen-down & _]
+            :up))
+
+(re-frame/reg-event-db
+ ::start-path
+ (re-frame/path [:quilt :paths])
+ (fn-traced [paths [event [column row] & _]]
+            (conj paths [column row column row])))
+
+(re-frame/reg-event-db
+ ::continue-path
+ (re-frame/path [:quilt :paths])
+ (fn-traced [paths [event [column row] & _]]
+            (let [last-line-idx (dec (count paths))]
+              (update paths last-line-idx conj column row))))
