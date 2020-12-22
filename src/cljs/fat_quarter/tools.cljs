@@ -14,31 +14,24 @@
     {:on-mouse-down click}))
 
 (def line-drawer
-  (let [pen-down @(re-frame/subscribe [::subs/pen-down])
+  (let [pen-down? (reagent.ratom/atom :up)
+        new-path (reagent.ratom/atom [])
         paths    @(re-frame/subscribe [::subs/quilt-paths])
         start-path (fn start-path [e column row]
-                     (let [pen-down @(re-frame/subscribe [::subs/pen-down])]
-                       (re-frame/console :log (str "setting pen down, was " pen-down))
-                       (when (not= (.-buttons e) 0)
-                         (re-frame/console :log (str "e " e))
-                         (re-frame/dispatch [::events/set-pen-down])
-                         (re-frame/dispatch [::events/start-path [column row]]))))
-        continue-path (fn continue-path [e column row]
-                        (let [pen-down @(re-frame/subscribe [::subs/pen-down])]
-                          (when (= :down pen-down)
-                            (re-frame/console :log (str "continuing path"))
-                            (re-frame/dispatch [::events/continue-path [column row]]))))
+                     (re-frame/console :log (str "setting pen down, was " @pen-down?))
+                     (when (not= (.-buttons e) 0)
+                       (reset! pen-down? :down)
+                       (reset! new-path [column row column row])))
         end-path (fn end-path [e column row]
-                   (let [pen-down @(re-frame/subscribe [::subs/pen-down])]
-                     (re-frame/console :log (str "setting pen up, was " pen-down))
-                     (when (= :down pen-down)
-                       (continue-path e column row)
-                       (re-frame/dispatch-sync [::events/set-pen-up]))))
+                   (re-frame/console :log (str "setting pen up, was " @pen-down?))
+                   (when (= :down @pen-down?)
+                     #_(swap! new-path conj column row)
+                     (reset! pen-down? :up)
+                     (re-frame/dispatch-sync [::events/add-new-path (conj @new-path column row)])))
         ]
     {
      :on-mouse-down start-path
      :on-mouse-over start-path
-     :on-mouse-move continue-path
      :on-mouse-up end-path
      :on-mouse-out end-path
      }))

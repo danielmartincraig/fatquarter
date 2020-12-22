@@ -16,7 +16,7 @@
                :x column
                :y row}]
     [:rect.interface-square (assoc attrs :on-mouse-down on-mouse-down-fn
-                                         :on-mouse-up   on-mouse-up-fn)]))
+                                   :on-mouse-up   on-mouse-up-fn)]))
 
 (defn interface []
   (let [quilt-dimensions @(re-frame/subscribe [::subs/quilt-dimensions])
@@ -49,12 +49,28 @@
 
 (defn quilt-app []
   (let [quilt-dimensions @(re-frame/subscribe [::subs/quilt-dimensions])]
-       [:svg {:width (* (inc quilt-dimensions) 20)
-              :height (* (inc quilt-dimensions) 20)}
-        [graph]
-        [quilt]
-        [interface]
-        ]))
+    [:svg {:width (* (inc quilt-dimensions) 20)
+           :height (* (inc quilt-dimensions) 20)}
+     [graph]
+     [quilt]
+     [interface]
+     ]))
+
+(defn undo-button []
+  (let [undos? (re-frame/subscribe [:undos?])]
+    (fn []
+      [:input {:type "button"
+               :value "undo"
+               :disabled (not @undos?)
+               :on-click #(re-frame/dispatch [:undo])}])))
+
+(defn redo-button []
+  (let [redos? (re-frame/subscribe [:redos?])]
+    (fn []
+      [:input {:type "button"
+               :value "redo"
+               :disabled (not @redos?)
+               :on-click #(re-frame/dispatch [:redo])}])))
 
 (defn toolbox-view []
   (let [active-tool @(re-frame/subscribe [::subs/active-tool])
@@ -66,20 +82,25 @@
      [:p (str "Available tools:")]
      [:ul (for [tool (keys available-tools)]
             ^{:key (str tool)} [:li {:on-click #(re-frame/dispatch [::events/set-active-tool tool])}
-                         (str tool)])]]))
+                                (str tool)])]]))
 
 
-(defn dimension-buttons []
-  [:div
-   [:button {:on-click #(re-frame/dispatch [::events/increase-dimensions])} "+"]
-   [:button {:on-click #(re-frame/dispatch [::events/decrease-dimensions])} "-"]])
+(defn buttons []
+  (fn []
+    [:div
+     [:div
+      [:button {:on-click #(re-frame/dispatch [::events/increase-dimensions])} "+"]
+      [:button {:on-click #(re-frame/dispatch [::events/decrease-dimensions])} "-"]]
+     [:div
+      [undo-button]
+      [redo-button]]]))
 
 (defn main-panel []
   (let [name (re-frame/subscribe [::subs/name])
         quilt-dimensions @(re-frame/subscribe [::subs/quilt-dimensions])]
 
     [:div
-     [dimension-buttons]
+     [buttons]
      [toolbox-view]
      [quilt-app]
      ]))
