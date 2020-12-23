@@ -3,7 +3,6 @@
    [re-frame.core :as re-frame]
    [fat-quarter.db :as db]
    [day8.re-frame.tracing :refer-macros [fn-traced]]
-   [day8.re-frame.undo :as undo :refer [undoable]]
    ))
 
 (re-frame/reg-event-db
@@ -36,10 +35,5 @@
              ]
             new-active-tool))
 
-(re-frame/reg-event-db
- ::add-new-path
- [(re-frame/path [:quilt :paths])
-  (undoable "adding path")]
- (fn-traced [paths [event new-path & _]]
-            (conj paths new-path)))
+
 

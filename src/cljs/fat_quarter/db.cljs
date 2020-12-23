@@ -3,7 +3,7 @@
    [re-frame.core :as re-frame]))
 
 (def default-db
-  {:quilt {:dimensions 10
+  {:quilt {:dimensions 20
            :paths []}
    :active-tool :line-drawer
    :toolbox {:available-tools {}}

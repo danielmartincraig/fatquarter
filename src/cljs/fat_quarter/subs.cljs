@@ -49,7 +49,14 @@
  ::active-tool-attrs
  :<- [::available-tools]
  :<- [::active-tool]
- (fn [[available-tools active-tool] _]
-   (get available-tools active-tool)))
+ (fn [[available-tools active-tool] & _]
+   (get-in available-tools [active-tool :attrs])))
+
+(re-frame/reg-sub
+ ::active-tool-state
+ :<- [::available-tools]
+ :<- [::active-tool]
+ (fn [[available-tools active-tool] & _]
+   (get-in available-tools [active-tool :state])))
 
 
