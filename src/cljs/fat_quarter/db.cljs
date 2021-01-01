@@ -6,5 +6,4 @@
   {:quilt {:dimensions 20
            :paths []}
    :active-tool :line-drawer
-   :toolbox {:available-tools {}}
-   :pen-down :up})
+   :toolbox {:available-tools {}}})

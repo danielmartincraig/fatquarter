@@ -15,3 +15,9 @@
     stroke: black;
     stroke-width: 3;
 }
+
+.new-path {
+    stroke: gray;
+    stroke-dasharray: 15 2;
+    stroke-width: 3;
+}

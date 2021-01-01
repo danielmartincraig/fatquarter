@@ -2,22 +2,31 @@
   (:require
    [re-frame.core :as re-frame]
    [fat-quarter.subs :as subs]
-   [fat-quarter.events :as events]))
+   [fat-quarter.events :as events]
+   [fat-quarter.line-drawer :as line-drawer]))
 
 (defn interface-square [column row]
-  (let [{:keys [on-mouse-down on-mouse-up]} @(re-frame/subscribe [::subs/active-tool-attrs])
+  (let [{:keys [on-mouse-down on-mouse-up on-mouse-over on-mouse-out on-mouse-move]} @(re-frame/subscribe [::subs/active-tool-attrs])
         tool-state (re-frame/subscribe [::subs/active-tool-state])
         vx (+ 10 column)
         vy (+ 10 row)
         on-mouse-down-fn (if on-mouse-down (fn [e] (apply on-mouse-down [e vx vy])) nil)
         on-mouse-up-fn   (if on-mouse-up   (fn [e] (apply on-mouse-up   [e vx vy])) nil)
+        on-mouse-over-fn (if on-mouse-over (fn [e] (apply on-mouse-over [e vx vy])) nil)
+        on-mouse-out-fn  (if on-mouse-out (fn [e] (apply on-mouse-out [e vx vy])) nil)
+        on-mouse-move-fn  (if on-mouse-move (fn [e] (apply on-mouse-move [e vx vy])) nil)
         attrs {:width 20
                :height 20
                :x column
                :y row}]
     (fn []
       [:rect.interface-square (assoc attrs :on-mouse-down on-mouse-down-fn
-                                           :on-mouse-up   on-mouse-up-fn)])))
+                                     :on-mouse-up         on-mouse-up-fn
+;;                                     :on-mouse-over       on-mouse-over-fn
+;;                                     :on-mouse-out        on-mouse-out-fn
+                                     :on-mouse-move       on-mouse-move-fn)])))
+
+
 
 (defn interface []
   (let [quilt-dimensions (re-frame/subscribe [::subs/quilt-dimensions])]
@@ -56,6 +65,7 @@
              :height (* (inc quilt-dimensions) 20)}
        [graph]
        [quilt]
+       [line-drawer/line-drawer-layer]
        [interface]])))
 
 (defn undo-button []
