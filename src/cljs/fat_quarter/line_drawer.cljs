@@ -12,21 +12,45 @@
  (fn-traced [paths [event new-path & _]]
             (conj paths new-path)))
 
-(re-frame/reg-event-db
- ::set-pen-up
- (re-frame/path [:toolbox :available-tools :line-drawer :state :pen-down?])
- (fn-traced [] false))
+(re-frame/reg-event-fx
+ ::start-new-path
+ (re-frame/path [:toolbox :available-tools :line-drawer :state :new-path])
+ (fn [{:keys [event db]} event]
+   (let [[_ [column row]] event]
+     {:db [column row column row column row]}
+     )))
+
+
+(re-frame/reg-event-fx
+ ::start-path
+ [(re-frame/path [:toolbox :available-tools :line-drawer :state])
+  (undoable "start path")
+  ]
+ (fn [{:keys [event db]} event]
+   (let [[_ [column row]] event
+         new-path [column row column row column row]]
+     {:db (assoc db :pen-down? true
+                 :new-path new-path)})))
+
+(re-frame/reg-event-fx
+ ::end-path
+ (re-frame/path [:toolbox :available-tools :line-drawer :state])
+ (fn [{:keys [event db]} event]
+   (let [[_ [column row]] event
+         paths            (:paths db)
+         new-path         (:new-path db)]
+     {:db (-> db
+              (assoc :pen-down? false
+                     :paths     (conj paths
+                                      (conj (pop (pop new-path)) column row))
+                     :new-path []))}
+     )))
 
 (re-frame/reg-event-db
  ::set-pen-down
  (re-frame/path [:toolbox :available-tools :line-drawer :state :pen-down?])
  (fn-traced [] true))
 
-(re-frame/reg-event-db
- ::start-new-path
- (re-frame/path [:toolbox :available-tools :line-drawer :state :new-path])
- (fn-traced [_ [event [column row]]]
-            [column row column row column row]))
 
 (re-frame/reg-event-db
  ::finish-new-path
@@ -59,37 +83,48 @@
  (fn [active-tool-state]
    (:new-path active-tool-state)))
 
+(re-frame/reg-sub
+ ::paths
+ :<- [:fat-quarter.subs/active-tool-state]
+ (fn [active-tool-state]
+   (:paths active-tool-state)))
+
 (def line-drawer
   (let [pen-down? (re-frame/subscribe [::pen-down?])
         new-path (re-frame/subscribe [::new-path])
         start-path (fn start-path [e column row]
                      (if (not= (.-buttons e) 0)
                        (do
-                         (re-frame/dispatch-sync [::set-pen-down])
-                         (re-frame/dispatch-sync [::start-new-path [column row]]))))
+                         (re-frame/dispatch-sync [::start-path [column row]])
+                         #_(re-frame/dispatch-sync [::set-pen-down])
+                         #_(re-frame/dispatch-sync [::start-new-path [column row]]))))
         continue-path (fn [e column row]
                         (when @pen-down?
                           (re-frame/dispatch-sync [::update-new-path-endpoint [column row]])))
         end-path (fn end-path [e column row]
                    (when @pen-down?
                      (do
-                      (re-frame/dispatch-sync [::set-pen-up])
-                      (re-frame/dispatch-sync [::update-new-path-endpoint [column row]])
-                      (re-frame/dispatch-sync [::add-new-path @new-path])
-                      (re-frame/dispatch-sync [::clear-new-path]))
-                     ))]
+                       (re-frame/dispatch-sync [::end-path [column row]]))))]
     {:attrs {:on-mouse-down start-path
              :on-mouse-over start-path
              :on-mouse-move continue-path
              :on-mouse-up end-path}
 
      :state {:pen-down? false
+             :paths []
              :new-path []}}))
 
 (defn line-drawer-layer []
-  (let [new-path (re-frame/subscribe [::new-path])]
+  (let [new-path (re-frame/subscribe [::new-path])
+        paths    (re-frame/subscribe [::paths])]
     (fn []
-      (let [[x y & more-points] @new-path]
-        [:path.new-path {:d (str "M " x " " y " L " (clojure.string/join " " more-points))}]
-        ))))
+      [:g
+       [:g
+        (for [[x y & more-points] @paths]
+          ^{:key (str "line-drawer-path," x y more-points)}
+          [:path.quilt-path {:d (str "M " x " " y " L " (clojure.string/join " " more-points))}])
+        [:g
+         (let [[x y & more-points] @new-path]
+           [:path.new-path {:d (str "M " x " " y " L " (clojure.string/join " " more-points))}])]
+        ]])))
 

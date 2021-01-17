@@ -26,8 +26,6 @@
 ;;                                     :on-mouse-out        on-mouse-out-fn
                                      :on-mouse-move       on-mouse-move-fn)])))
 
-
-
 (defn interface []
   (let [quilt-dimensions (re-frame/subscribe [::subs/quilt-dimensions])]
     (fn []
