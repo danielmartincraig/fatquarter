@@ -31,8 +31,7 @@
 (re-frame/reg-event-db
  ::set-active-tool
  (re-frame/path [:active-tool])
- (fn-traced [active-tool [event new-active-tool & _]
-             ]
+ (fn-traced [active-tool [event new-active-tool & _]]
             new-active-tool))
 
 

@@ -2,6 +2,7 @@
   (:require
    [re-frame.core :as re-frame]
    [fat-quarter.line-drawer :as line-drawer]
+   [fat-quarter.zigzag-tool :as zigzag-tool]
    [day8.re-frame.tracing :refer-macros [fn-traced]]))
 
 (def pointer
@@ -20,5 +21,6 @@
                        :state {}}
              :clicker {:attrs clicker
                        :state {}}
-             :line-drawer line-drawer/line-drawer}))
+             :line-drawer line-drawer/line-drawer
+             :zigzag-tool zigzag-tool/zigzag-tool}))
 

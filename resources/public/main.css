@@ -16,6 +16,11 @@
     stroke-width: 3;
 }
 
+.zigzag-path {
+    stroke: red;
+    stroke-width: 1;
+}
+
 .new-path {
     stroke: gray;
     stroke-dasharray: 15 2;
