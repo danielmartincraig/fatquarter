@@ -22,8 +22,6 @@
     (fn []
       [:rect.interface-square (assoc attrs :on-mouse-down on-mouse-down-fn
                                      :on-mouse-up         on-mouse-up-fn
-;;                                     :on-mouse-over       on-mouse-over-fn
-;;                                     :on-mouse-out        on-mouse-out-fn
                                      :on-mouse-move       on-mouse-move-fn)])))
 
 (defn interface []
@@ -57,10 +55,10 @@
          [:path.quilt-path {:d (str "M " x " " y " L " (clojure.string/join " " more-points))}])])))
 
 (defn quilt-app []
-  (let [quilt-dimensions @(re-frame/subscribe [::subs/quilt-dimensions])]
+  (let [quilt-dimensions (re-frame/subscribe [::subs/quilt-dimensions])]
     (fn []
-      [:svg {:width (* (inc quilt-dimensions) 20)
-             :height (* (inc quilt-dimensions) 20)}
+      [:svg {:width (* (inc @quilt-dimensions) 20)
+             :height (* (inc @quilt-dimensions) 20)}
        [graph]
        [quilt]
        [line-drawer/line-drawer-layer]
@@ -104,9 +102,7 @@
       [redo-button]]]))
 
 (defn main-panel []
-  (let [name (re-frame/subscribe [::subs/name])
-        quilt-dimensions @(re-frame/subscribe [::subs/quilt-dimensions])]
-
+  (let [name (re-frame/subscribe [::subs/name])]
     [:div
      [buttons]
 ;;     [toolbox-view]
