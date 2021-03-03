@@ -1,7 +1,6 @@
 # fat-quarter
 
-A [re-frame](https://github.com/day8/re-frame) application designed to ... well, that part is up to
-you.
+A quilting tool featuring interactive graph paper, multiple drawing tools, and undo/redo. Created with [re-frame](https://github.com/day8/re-frame).
 
 ## Getting Started
 
