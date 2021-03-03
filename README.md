@@ -1,6 +1,6 @@
 # fat-quarter
 
-A quilting tool featuring interactive graph paper, multiple drawing tools, and undo/redo. Created with [re-frame](https://github.com/day8/re-frame). Check it out at [danielmartincraig.net](https://www.danielmartincraig.net).
+A quilting tool featuring interactive graph paper, multiple drawing tools, and undo/redo. Created with [re-frame](https://github.com/day8/re-frame). Check it out at [danielmartincraig.net](http://www.danielmartincraig.net).
 
 ## Getting Started
 
